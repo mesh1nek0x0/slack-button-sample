@@ -15,7 +15,7 @@ Slack App Sample powered by serverless with NodeJS
 - WIP :zap: build with serverless
 - WIP :shirt: support eslint
 - WIP :mouse: support editorconfig
-- WIP :black_joker: support jest
+- :black_joker: support jest
 - WIP :arrows_counterclockwise: support CircleCI
 
 ---

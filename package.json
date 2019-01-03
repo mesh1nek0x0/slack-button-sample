@@ -2,5 +2,21 @@
   "name": "slack-button-sample",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "yarn jest",
+    "invoke": "yarn node-lambda run"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "sinon": "^7.2.2",
+    "slack-mock": "^1.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "dotenv": "^6.2.0"
+  }
 }
