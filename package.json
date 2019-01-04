@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "test": "yarn jest",
-    "invoke": "yarn node-lambda run"
+    "invoke": "echo 'please type invoke:button or invoke:reaction'",
+    "invoke:button": "sls invoke local -f button",
+    "invoke:reaction": "SLS_DEBUG=* sls invoke local -f reaction --path __tests__/fixtures/interactive_message.json",
+    "deploy": "sls deploy",
+    "remove-app": "sls remove"
   },
   "devDependencies": {
     "jest": "^23.6.0",

@@ -5,47 +5,64 @@ describe('test', () => {
   beforeAll(() => {
     this.service = new MessagePostService();
   });
-  afterEach(() => {
+  afterEach(async () => {
     slackMock.reset();
+    await slackMock.rtm.stopServer();
   });
   
-  afterAll(() => {
-    // need to stop
-    // https://github.com/Skellington-Closet/slack-mock/blob/master/examples/test/slack-app.spec.js#L22
-    slackMock.rtm.stopServer();
-  });
-  
-  it('slackへの通信が成功した場合、成功として処理を終えること', async () => {
-    const postText = 'mock text';
-    // 外部通信に依存させない
-    slackMock.web.addResponse({
-      url: 'https://slack.com/api/chat.postMessage',
-      status: 200,
-      body: {
-        ok: true,
-        message: {
-          text: postText
+  describe('postSimpleMessage', () => {
+    it('slackへの通信が成功した場合、成功として処理を終えること', async () => {
+      const postText = 'mock text';
+      // 外部通信に依存させない
+      slackMock.web.addResponse({
+        url: 'https://slack.com/api/chat.postMessage',
+        status: 200,
+        body: {
+          ok: true,
+          message: {
+            text: postText
+          }
         }
-      }
+      });
+      const response = await this.service.postSimpleMessage(postText);
+      expect(response.ok).toBe(true);
+      expect(response.body).toBe(`posted:${postText}`);
     });
-    const response = await this.service.postSimpleMessage(postText);
-    expect(response.ok).toBe(true);
-    expect(response.body).toBe(`posted:${postText}`);
+    
+    it('slackへの通信が失敗した場合、失敗として処理を終えること', async () => {
+      const postText = 'mock text';
+      // 外部通信に依存させない
+      slackMock.web.addResponse({
+        url: 'https://slack.com/api/chat.postMessage',
+        status: 200,
+        body: {
+          ok: false,
+          error: 'too_many_attachments'
+        }
+      });
+      const response = await this.service.postSimpleMessage(postText);
+      expect(response.ok).toBe(false);
+      expect(response.body).toBe('An API error occurred: too_many_attachments');
+    });
   });
   
-  it('slackへの通信が失敗した場合、失敗として処理を終えること', async () => {
-    const postText = 'mock text';
-    // 外部通信に依存させない
-    slackMock.web.addResponse({
-      url: 'https://slack.com/api/chat.postMessage',
-      status: 200,
-      body: {
-        ok: false,
-        error: 'too_many_attachments'
-      }
+  describe('postYesNoButtonMessage', () => {
+    it('slackへの通信が成功した場合、成功として処理を終えること', async () => {
+      const postText = 'yes/no?';
+      // 外部通信に依存させない
+      slackMock.web.addResponse({
+        url: 'https://slack.com/api/chat.postMessage',
+        status: 200,
+        body: {
+          ok: true,
+          message: {
+            text: postText
+          }
+        }
+      });
+      const response = await this.service.postYesNoButtonMessage(postText);
+      expect(response.ok).toBe(true);
+      expect(response.body).toBe(`posted:yes/no? with button`);
     });
-    const response = await this.service.postSimpleMessage(postText);
-    expect(response.ok).toBe(false);
-    expect(response.body).toBe('An API error occurred: too_many_attachments');
   });
 });
